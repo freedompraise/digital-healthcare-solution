@@ -18,15 +18,13 @@ print(BASE_DIR)
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
+    "django.contrib.sites",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "rest_framework",
     "rest_framework_simplejwt",
     "medication_adherence_app",
-    # "allauth",
-    # "allauth.account",
-    # "allauth.socialaccount",
 ]
 
 MIDDLEWARE = [
@@ -37,13 +35,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "allauth.account.middleware.AccountMiddleware",
 ]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
@@ -59,9 +54,7 @@ SIMPLE_JWT = {
 
 ROOT_URLCONF = "medication_adherence_project.urls"
 
-# AUTHENTICATION_BACKENDS = [
-#     "allauth.account.auth_backends.AuthenticationBackend",
-# ]
+AUTHENTICATION_BACKENDS = ["medication_adherence_app.auth_backends.EmailBackend"]
 
 TEMPLATES = [
     {
@@ -121,12 +114,12 @@ SITE_ID = 1
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # # Django Allauth Settings
-# ACCOUNT_EMAIL_REQUIRED = True
-# ACCOUNT_USERNAME_REQUIRED = False
-# ACCOUNT_AUTHENTICATION_METHOD = "email"
-# ACCOUNT_UNIQUE_EMAIL = True
-# ACCOUNT_EMAIL_VERIFICATION = "none"
-# ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_SESSION_REMEMBER = True
 
 # Cloudinary Settings
 CLOUDINARY_STORAGE = {
@@ -138,6 +131,8 @@ CLOUDINARY_STORAGE = {
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 MEDIA_URL = "/media/"
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "static"
 
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "http")
