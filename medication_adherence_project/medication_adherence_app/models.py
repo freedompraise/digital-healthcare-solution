@@ -30,6 +30,7 @@ class CustomUser(AbstractUser):
     USER_TYPES = [
         ("HP", "Healthcare Provider"),
         ("PT", "Patient"),
+        ("AD", "Administrator"),
     ]
 
     username = None
