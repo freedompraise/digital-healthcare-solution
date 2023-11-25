@@ -1,3 +1,4 @@
+from pathlib import Path
 import os
 from dotenv import load_dotenv
 
@@ -9,7 +10,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
+print(BASE_DIR)
 
 # Application definition
 
@@ -19,13 +21,12 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
     "medication_adherence_app",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
+    # "allauth",
+    # "allauth.account",
+    # "allauth.socialaccount",
 ]
 
 MIDDLEWARE = [
@@ -36,7 +37,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "allauth.account.middleware.AccountMiddleware",
+    # "allauth.account.middleware.AccountMiddleware",
 ]
 
 REST_FRAMEWORK = {
@@ -50,11 +51,17 @@ REST_FRAMEWORK = {
     ],
 }
 
+SIMPLE_JWT = {
+    "SIGNING_KEY": "cronyGlasses",
+    "ALGORITHM": "HS256",
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
 ROOT_URLCONF = "medication_adherence_project.urls"
 
-AUTHENTICATION_BACKENDS = [
-    "allauth.account.auth_backends.AuthenticationBackend",
-]
+# AUTHENTICATION_BACKENDS = [
+#     "allauth.account.auth_backends.AuthenticationBackend",
+# ]
 
 TEMPLATES = [
     {
@@ -78,10 +85,7 @@ WSGI_APPLICATION = "medication_adherence_project.wsgi.application"
 # Database
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "medication_adherence_project_db",
-    }
+    "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}
 }
 
 
@@ -116,13 +120,13 @@ SITE_ID = 1
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Django Allauth Settings
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_EMAIL_VERIFICATION = "none"
-ACCOUNT_SESSION_REMEMBER = True
+# # Django Allauth Settings
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_USERNAME_REQUIRED = False
+# ACCOUNT_AUTHENTICATION_METHOD = "email"
+# ACCOUNT_UNIQUE_EMAIL = True
+# ACCOUNT_EMAIL_VERIFICATION = "none"
+# ACCOUNT_SESSION_REMEMBER = True
 
 # Cloudinary Settings
 CLOUDINARY_STORAGE = {
@@ -134,3 +138,10 @@ CLOUDINARY_STORAGE = {
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 MEDIA_URL = "/media/"
+
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "http")
+APPEND_SLASH = True
+SECURE_SSL_REDIRECT = False
+USE_HTTPS = False
+SCHEME = "https://" if USE_HTTPS else "http://"
