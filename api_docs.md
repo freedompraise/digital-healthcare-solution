@@ -1,28 +1,70 @@
 ### Authentication Endpoints
 
-#### Login (Obtain Token)
+#### 1. Obtain Token
 
-Endpoint: `/api/login/`  
-Method: `POST`  
-Description: Obtains an authentication token for the user.
+- **Endpoint:** `/api/token/obtain`
+- **Method:** POST
+- **Description:** Obtain an authentication token by providing valid credentials.
+- **Request Body:**
 
-Request:
+  - `email` (string): User's email address
+  - `password` (string): User's password
 
-```json
-{
-  "username": "example@email.com",
-  "password": "your_password"
-}
-```
+- **Example Request:**
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "securepassword"
+  }
+  ```
+- **Example Response (Success):**
 
-Response:
+  ```json
+  {
+    "access": "eyJ0e...your_access_token_here...Fg",
+    "refresh": "eyJ0e...your_refresh_token_here...Iw",
+    "user_type": "PT"  # User type: "PT" for Patient or "HP" for Healthcare Provider
+  }
+  ```
 
-```json
-{
-  "token": "your_authentication_token",
-  "user_type": "PT" // User type can be "PT" (Patient) or "HP" (Healthcare Provider)
-}
-```
+- **Example Response (Error):**
+  ```json
+  {
+    "detail": "Invalid credentials"
+  }
+  ```
+
+#### 2. Refresh Token
+
+- **Endpoint:** `/api/token/refresh`
+- **Method:** POST
+- **Description:** Refresh an expired authentication token by providing a valid refresh token.
+- **Request Body:**
+
+  - `refresh` (string): Refresh token obtained during the initial login.
+
+- **Example Request:**
+
+  ```json
+  {
+    "refresh": "eyJ0e...your_refresh_token_here...Iw"
+  }
+  ```
+
+- **Example Response (Success):**
+
+  ```json
+  {
+    "access": "eyJ0e...your_new_access_token_here...Fg"
+  }
+  ```
+
+- **Example Response (Error):**
+  ```json
+  {
+    "detail": "Token is invalid or expired"
+  }
+  ```
 
 #### Registration
 
