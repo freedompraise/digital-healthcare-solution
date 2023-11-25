@@ -1,6 +1,10 @@
 # medication_adherence_app/serializers.py
-
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import (
+    TokenObtainPairSerializer as JwtTokenObtainPairSerializer,
+)
+
 from .models import (
     Patient,
     HealthcareProvider,
@@ -8,6 +12,16 @@ from .models import (
     CommunicationLog,
     CustomUser,
 )
+
+
+class TokenObtainPairSerializer(JwtTokenObtainPairSerializer):
+    username_field = get_user_model().USERNAME_FIELD
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        user_type = self.user.user_type if self.user else None
+        data["user_type"] = user_type
+        return data
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -23,6 +37,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             password=validated_data["password"],
             user_type=validated_data["user_type"],
         )
+        user.save()
         return user
 
 

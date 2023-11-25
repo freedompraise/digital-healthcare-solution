@@ -1,5 +1,6 @@
 # medication_adherence_app/views.py
 from rest_framework import generics
+from rest_framework.views import APIView
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -9,9 +10,13 @@ from .models import CustomUser, HealthcareProvider, Patient
 from .serializers import (
     PatientSerializer,
     HealthcareProviderSerializer,
+    TokenObtainPairSerializer,
     CustomUserSerializer,
     AdherenceReportSerializer,
     CommunicationLogSerializer,
+)
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
 )
 
 
@@ -51,23 +56,25 @@ class RegisterUserView(generics.CreateAPIView):
         return Response({"message": message}, status=status.HTTP_201_CREATED)
 
 
-class UserLoginView(ObtainAuthToken):
-    """
-    View for obtaining an authentication token.
-    """
-
-    permission_classes = [AllowAny]
+class EmailTokenObtainPairView(TokenObtainPairView):
+    serializer_class = TokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        token = Token.objects.get(key=response.data["token"])
-        user_type = token.user.user_type if token.user else None
-        return Response({"token": token.key, "user_type": user_type})
+        if response.status_code == status.HTTP_200_OK:
+            # Extract user_type from the validated data
+            user_type = response.data.get("user_type")
+            response.data["user_type"] = user_type
+        return response
 
 
-# class PatientListCreateView(generics.ListAPIView):
-#     queryset = Patient.objects.all()
-#     serializer_class = PatientSerializer
+class PatientListCreateView(generics.ListAPIView):
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
+
+    def get_queryset(self):
+        # Filter patients based on the authenticated user
+        return Patient.objects.filter(user=self.request.user)
 
 
 # class PatientDetailView(generics.RetrieveUpdateDestroyAPIView):
