@@ -107,21 +107,9 @@ class HealthcareProviderDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response(serializer.data)
 
 
-# class AdherenceReportListCreateView(generics.ListCreateAPIView):
-#     queryset = AdherenceReport.objects.all()
-#     serializer_class = AdherenceReportSerializer
+class HealthcareProviderPatientsView(generics.ListAPIView):
+    serializer_class = PatientSerializer
 
-
-# class AdherenceReportDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = AdherenceReport.objects.all()
-#     serializer_class = AdherenceReportSerializer
-
-
-# class CommunicationLogListCreateView(generics.ListCreateAPIView):
-#     queryset = CommunicationLog.objects.all()
-#     serializer_class = CommunicationLogSerializer
-
-
-# class CommunicationLogDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = CommunicationLog.objects.all()
-#     serializer_class = CommunicationLogSerializer
+    def get_queryset(self):
+        healthcare_provider = self.request.user.healthcareprovider
+        return Patient.objects.filter(healthcare_provider=healthcare_provider)
