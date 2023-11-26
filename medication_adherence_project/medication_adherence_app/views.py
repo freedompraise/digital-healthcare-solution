@@ -8,6 +8,7 @@ from .serializers import (
     PatientSerializer,
     TokenObtainPairSerializer,
     CustomUserSerializer,
+    HealthcareProviderSerializer,
 )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -62,28 +63,48 @@ class EmailTokenObtainPairView(TokenObtainPairView):
         return response
 
 
-class PatientListCreateView(generics.ListAPIView):
+class PatientDetailView(generics.RetrieveUpdateAPIView):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
 
-    def get_queryset(self):
-        # Filter patients based on the authenticated user
-        return Patient.objects.filter(user=self.request.user)
+    def get_object(self):
+        # Retrieve the patient associated with the logged-in user
+        return self.queryset.get(user=self.request.user)
+
+    def retrieve(self, request, *args, **kwargs):
+        patient = self.get_object()
+        serializer = self.get_serializer(patient)
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        patient = self.get_object()
+        serializer = self.get_serializer(patient, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
-# class PatientDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Patient.objects.all()
-#     serializer_class = PatientSerializer
+class HealthcareProviderDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = HealthcareProvider.objects.all()
+    serializer_class = HealthcareProviderSerializer
 
+    def get_object(self):
+        # Retrieve the healthcare provider associated with the logged-in user
+        return self.queryset.get(user=self.request.user)
 
-# class HealthcareProviderListCreateView(generics.ListCreateAPIView):
-#     queryset = HealthcareProvider.objects.all()
-#     serializer_class = HealthcareProviderSerializer
+    def retrieve(self, request, *args, **kwargs):
+        healthcare_provider = self.get_object()
+        serializer = self.get_serializer(healthcare_provider)
+        return Response(serializer.data)
 
-
-# class HealthcareProviderDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = HealthcareProvider.objects.all()
-#     serializer_class = HealthcareProviderSerializer
+    def update(self, request, *args, **kwargs):
+        healthcare_provider = self.get_object()
+        serializer = self.get_serializer(
+            healthcare_provider, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 # class AdherenceReportListCreateView(generics.ListCreateAPIView):
