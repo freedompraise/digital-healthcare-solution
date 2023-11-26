@@ -75,6 +75,10 @@ TEMPLATES = [
     },
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
+ACCESS_CONTROL_ALLOW_ORIGIN = "*"
+
 WSGI_APPLICATION = "medication_adherence_project.wsgi.application"
 
 
