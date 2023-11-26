@@ -57,6 +57,9 @@ class HealthcareProvider(models.Model):
     specialization = models.CharField(max_length=50, blank=True)
     license_id_information = models.CharField(max_length=50, blank=True)
 
+    def __str__(self):
+        return str(self.user)
+
 
 class Patient(models.Model):
     user = models.OneToOneField(
@@ -65,6 +68,9 @@ class Patient(models.Model):
     healthcare_provider = models.ForeignKey(
         HealthcareProvider, on_delete=models.CASCADE, blank=True, null=True
     )
+
+    def __str__(self):
+        return str(self.user)
 
 
 class Medication(models.Model):
