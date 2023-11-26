@@ -27,9 +27,9 @@ class RegisterUserView(generics.CreateAPIView):
     def perform_create(self, serializer):
         user_type = self.request.data.get("user_type")
 
-        if user_type not in ["PT", "HP"]:
+        if user_type not in ["PT", "HP", "AD"]:
             raise serializers.ValidationError(
-                "Invalid user type. Please provide 'PT' or 'HP'."
+                "Invalid user type. Please provide 'PT', 'HP', or 'AD'."
             )
 
         validated_data = {
