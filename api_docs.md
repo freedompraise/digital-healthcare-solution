@@ -1,89 +1,27 @@
-### Authentication Endpoints
+# API Documentation
 
-#### 1. Obtain Token
 
-- **Endpoint:** `/api/token/obtain`
-- **Method:** POST
-- **Description:** Obtain an authentication token by providing valid credentials.
-- **Request Body:**
+### User Authentication and Authorization
 
-  - `email` (string): User's email address
-  - `password` (string): User's password
+#### Register User
 
-- **Example Request:**
-  ```json
-  {
-    "email": "user@example.com",
-    "password": "securepassword"
-  }
-  ```
-- **Example Response (Success):**
+- **Endpoint:** `/api/register/`
+- **Method:** `POST`
+- **Authentication:** Not required
+- **Description:** Register a new user (either patient or healthcare provider).
 
-  ```json
-  {
-    "access": "eyJ0e...your_access_token_here...Fg",
-    "refresh": "eyJ0e...your_refresh_token_here...Iw",
-    "user_type": "PT"  # User type: "PT" for Patient or "HP" for Healthcare Provider
-  }
-  ```
-
-- **Example Response (Error):**
-  ```json
-  {
-    "detail": "Invalid credentials"
-  }
-  ```
-
-#### 2. Refresh Token
-
-- **Endpoint:** `/api/token/refresh`
-- **Method:** POST
-- **Description:** Refresh an expired authentication token by providing a valid refresh token.
-- **Request Body:**
-
-  - `refresh` (string): Refresh token obtained during the initial login.
-
-- **Example Request:**
-
-  ```json
-  {
-    "refresh": "eyJ0e...your_refresh_token_here...Iw"
-  }
-  ```
-
-- **Example Response (Success):**
-
-  ```json
-  {
-    "access": "eyJ0e...your_new_access_token_here...Fg"
-  }
-  ```
-
-- **Example Response (Error):**
-  ```json
-  {
-    "detail": "Token is invalid or expired"
-  }
-  ```
-
-#### Registration
-
-Endpoint: `/api/register/`  
-Method: `POST`  
-Description: Registers a new user (either patient or healthcare provider).
-
-Request:
+**Request Body:**
 
 ```json
 {
   "name": "John Doe",
-  "email": "example@email.com",
-  "password": "your_password",
-  "user_type": "PT" // Specify user type as "PT" for Patient or "HP" for Healthcare Provider
+  "email": "john@example.com",
+  "password": "your_secure_password",
+  "user_type": "PT"  // Use "PT" for Patient or "HP" for Healthcare Provider
 }
 ```
 
-Response:
+**Response:**
 
 ```json
 {
@@ -91,50 +29,119 @@ Response:
 }
 ```
 
-### User Profile Endpoints
+#### Obtain Authentication Token
 
-#### Patient Profile
+- **Endpoint:** `/api/token/obtain/`
+- **Method:** `POST`
+- **Authentication:** Not required
+- **Description:** Obtain an authentication token for an existing user.
 
-Endpoint: `/api/patients/{patient_id}/`  
-Method: `GET`  
-Description: Retrieves the profile of a patient.
+**Request Body:**
 
-#### Healthcare Provider Profile
-
-Endpoint: `/api/healthcare-providers/{provider_id}/`  
-Method: `GET`  
-Description: Retrieves the profile of a healthcare provider.
-
-### Usage in Frontend
-
-Upon successful login, use the `user_type` from the token response to determine the type of user and direct them to the appropriate profile endpoint.
-
-Example (JavaScript):
-
-```javascript
-// Assuming you have the authentication token and user type stored after login
-const authToken = "your_authentication_token";
-const userType = "PT"; // or "HP"
-
-// Determine the profile endpoint based on user type
-const profileEndpoint =
-  userType === "PT" ? "/api/patients/" : "/api/healthcare-providers/";
-
-// Fetch the user profile using the determined endpoint
-fetch(profileEndpoint, {
-  method: "GET",
-  headers: {
-    Authorization: `Bearer ${authToken}`,
-    "Content-Type": "application/json",
-  },
-})
-  .then((response) => response.json())
-  .then((profileData) => {
-    // Handle the user profile data
-    console.log("User Profile Data:", profileData);
-  })
-  .catch((error) => {
-    // Handle errors
-    console.error("Error fetching user profile:", error);
-  });
+```json
+{
+  "email": "john@example.com",
+  "password": "your_secure_password"
+}
 ```
+
+**Response:**
+
+```json
+{
+  "token": "your_access_token",
+  "user_type": "PT"  // User type can be "PT" for Patient or "HP" for Healthcare Provider
+}
+```
+
+#### Patient Detail
+
+- **Endpoint:** `/api/patient/`
+- **Method:** `GET`
+- **Authentication:** Token-based (Include the obtained token in the request headers)
+- **Description:** Retrieve details of the authenticated patient.
+
+**Response (Success):**
+
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "user_type": "PT",
+}
+```
+
+**Response (Failure):**
+
+```json
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+#### Healthcare Provider Detail
+
+- **Endpoint:** `/api/healthcare_provider/`
+- **Method:** `GET`
+- **Authentication:** Token-based (Include the obtained token in the request headers)
+- **Description:** Retrieve details of the authenticated healthcare provider.
+
+**Response (Success):**
+
+```json
+{
+  "id": 1,
+  "name": "Dr. Smith",
+  "email": "dr.smith@example.com",
+  "user_type": "HP",
+  "clinic_affiliation": "General Hospital",
+  "specialization": "Cardiology",
+  "license_id_information": "12345"
+}
+```
+
+**Response (Failure):**
+
+```json
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+#### Healthcare Provider Patients List
+
+- **Endpoint:** `/api/healthcare_provider/patients/`
+- **Method:** `GET`
+- **Authentication:** Token-based (Include the obtained token in the request headers)
+- **Description:** Retrieve a list of patients under the authenticated healthcare provider.
+
+**Response (Success):**
+
+```json
+[
+  {
+    "id": 2,
+    "name": "Jane Doe",
+    "email": "jane@example.com",
+    "user_type": "PT",
+  },
+  // Other patients...
+]
+```
+
+**Response (Failure):**
+
+```json
+{
+  "detail": "Authentication credentials were not provided."
+}
+```
+
+### Frontend Integration
+
+- After obtaining the authentication token, store it securely in the frontend e.g., in a secure HTTP-only cookie.
+- Use the stored token to authenticate API requests by including it in the `Authorization` header.
+- Based on the returned user type during authentication, dynamically decide whether to call patient or healthcare provider endpoints.
+
+If you have specific questions about the frontend implementation or need further clarification, feel free to ask!
