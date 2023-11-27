@@ -1,4 +1,3 @@
-````markdown
 # Digital Healthcare Solution API
 
 ## Overview
@@ -27,7 +26,6 @@ This repository contains the backend code for the Digital Healthcare Solution AP
 git clone https://github.com/freedompraise/digital-healthcare-solution.git
 cd digital-healthcare-solution
 ```
-````
 
 2. Install dependencies:
 
@@ -62,7 +60,3 @@ The details of the endpoints can be found in the [API_DOCUMENTATION](/api_docs.m
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-```
-
-```
