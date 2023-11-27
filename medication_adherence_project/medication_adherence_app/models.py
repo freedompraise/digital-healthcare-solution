@@ -5,6 +5,7 @@ from .utils import (
     administration_route_choices,
     administration_frequency_choices,
     dosage_form_choices,
+    gender_choices,
 )
 
 
@@ -44,7 +45,7 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=25, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     address = models.CharField(max_length=50, blank=True, null=True)
-    gender = models.CharField(max_length=1, blank=True, null=True)
+    gender = models.CharField(max_length=1, choices=gender_choices, blank=True)
     profile_picture = models.ImageField(upload_to="images", blank=True)
     user_type = models.CharField(max_length=2, choices=USER_TYPES)
     USERNAME_FIELD = "email"

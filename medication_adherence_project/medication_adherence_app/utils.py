@@ -52,3 +52,9 @@ dosage_form_choices = [
     ("INH", "Inhaler"),
     ("OTH", "Other"),
 ]
+
+gender_choices = [
+    ("M", "Male"),
+    ("F", "Female"),
+    ("O", "Other"),
+]
