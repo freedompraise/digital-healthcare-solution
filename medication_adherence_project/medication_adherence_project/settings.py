@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 import dj_database_url
+from datetime import timedelta
 
 load_dotenv()
 
@@ -56,6 +57,7 @@ SIMPLE_JWT = {
     "SIGNING_KEY": "cronyGlasses",
     "ALGORITHM": "HS256",
     "AUTH_HEADER_TYPES": ("Bearer",),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
 }
 
 ROOT_URLCONF = "medication_adherence_project.urls"
