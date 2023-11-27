@@ -25,7 +25,17 @@ class TokenObtainPairSerializer(JwtTokenObtainPairSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ["id", "name", "email", "password", "user_type"]
+        fields = [
+            "name",
+            "email",
+            "password",
+            "user_type",
+            "profile_picture",
+            "gender",
+            "date_of_birth",
+            "address",
+            "phone_number",
+        ]
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
@@ -40,12 +50,16 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 
 class PatientSerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer()
+
     class Meta:
         model = Patient
-        fields = "__all__"
+        fields = ["user", "healthcare_provider", "medications", "alergies"]
 
 
 class HealthcareProviderSerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer()
+
     class Meta:
         model = HealthcareProvider
-        fields = "__all__"
+        fields = ["user", "clinic_affiliation", "specialization", "license_id"]
