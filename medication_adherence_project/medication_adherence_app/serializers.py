@@ -54,7 +54,7 @@ class PatientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Patient
-        fields = ["user", "healthcare_provider", "medications", "alergies"]
+        fields = ["user", "healthcare_provider"]
         depth = 1
 
     def update(self, instance, validated_data):
@@ -68,8 +68,6 @@ class PatientSerializer(serializers.ModelSerializer):
         instance.healthcare_provider = validated_data.get(
             "healthcare_provider", instance.healthcare_provider
         )
-        instance.medications = validated_data.get("medications", instance.medications)
-        instance.alergies = validated_data.get("alergies", instance.alergies)
 
         instance.save()
         return instance
