@@ -1,147 +1,341 @@
-# API Documentation
+# Medication Adherence API Documentation
 
+## Register User
 
-### User Authentication and Authorization
+### `POST /register/`
 
-#### Register User
+Create a new user (either a patient or healthcare provider).
 
-- **Endpoint:** `/api/register/`
-- **Method:** `POST`
-- **Authentication:** Not required
-- **Description:** Register a new user (either patient or healthcare provider).
-
-**Request Body:**
+#### Request
 
 ```json
 {
   "name": "John Doe",
-  "email": "john@example.com",
-  "password": "your_secure_password",
-  "user_type": "PT"  // Use "PT" for Patient or "HP" for Healthcare Provider
+  "email": "john.doe@example.com",
+  "password": "securepassword",
+  "user_type": "PT"
 }
 ```
 
-**Response:**
+- `name` (string): Full name of the user.
+- `email` (string): Email address of the user.
+- `password` (string): User's password.
+- `user_type` (string): User type, either "PT" for Patient, "HP" for Healthcare Provider, or "AD" for Administrator.
+
+#### Response
 
 ```json
 {
-  "message": "User registered successfully."
+  "message": "Patient registered successfully."
 }
 ```
 
-#### Obtain Authentication Token
+---
 
-- **Endpoint:** `/api/token/obtain/`
-- **Method:** `POST`
-- **Authentication:** Not required
-- **Description:** Obtain an authentication token for an existing user.
+## Obtain Token
 
-**Request Body:**
+### `POST /token/obtain`
+
+Obtain an access token by providing valid credentials.
+
+#### Request
 
 ```json
 {
-  "email": "john@example.com",
-  "password": "your_secure_password"
+  "email": "john.doe@example.com",
+  "password": "securepassword"
 }
 ```
 
-**Response:**
+#### Response
 
 ```json
 {
-  "token": "your_access_token",
-  "user_type": "PT"  // User type can be "PT" for Patient or "HP" for Healthcare Provider
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...",
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...",
+  "user_type": "PT"
 }
 ```
 
-#### Patient Detail
+- `access` (string): JWT access token.
+- `refresh` (string): JWT refresh token.
+- `user_type` (string): Type of the user.
 
-- **Endpoint:** `/api/patient/`
-- **Method:** `GET`
-- **Authentication:** Token-based (Include the obtained token in the request headers)
-- **Description:** Retrieve details of the authenticated patient.
+---
 
-**Response (Success):**
+## Patient Detail
+
+### `GET /patient/`
+
+Retrieve details of the logged-in patient.
+
+#### Response
 
 ```json
 {
-  "id": 1,
-  "name": "John Doe",
-  "email": "john@example.com",
-  "user_type": "PT",
+  "user": {
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone_number": "+1234567890",
+    "date_of_birth": "1990-01-01",
+    "address": "123 Main St",
+    "gender": "M",
+    "profile_picture": "/images/profile.jpg",
+    "user_type": "PT"
+  },
+  "healthcare_provider": {
+    "user": {
+      "name": "Dr. Smith",
+      "email": "dr.smith@example.com",
+      "phone_number": "+9876543210",
+      "date_of_birth": "1975-05-15",
+      "address": "456 Oak St",
+      "gender": "F",
+      "profile_picture": "/images/doctor.jpg",
+      "user_type": "HP"
+    },
+    "clinic_affiliation": "City Hospital",
+    "specialization": "Cardiology",
+    "license_id": "12345"
+  },
+  "allergies": "Peanuts"
 }
 ```
 
-**Response (Failure):**
+- `user` (object): Patient's user details.
+- `healthcare_provider` (object): Healthcare provider's details associated with the patient.
+- `allergies` (string): Patient's allergies.
+
+---
+
+## Healthcare Provider Detail
+
+### `GET /healthcare-provider/`
+
+Retrieve details of the logged-in healthcare provider.
+
+#### Response
 
 ```json
 {
-  "detail": "Authentication credentials were not provided."
-}
-```
-
-#### Healthcare Provider Detail
-
-- **Endpoint:** `/api/healthcare_provider/`
-- **Method:** `GET`
-- **Authentication:** Token-based (Include the obtained token in the request headers)
-- **Description:** Retrieve details of the authenticated healthcare provider.
-
-**Response (Success):**
-
-```json
-{
-  "id": 1,
-  "name": "Dr. Smith",
-  "email": "dr.smith@example.com",
-  "user_type": "HP",
-  "clinic_affiliation": "General Hospital",
+  "user": {
+    "name": "Dr. Smith",
+    "email": "dr.smith@example.com",
+    "phone_number": "+9876543210",
+    "date_of_birth": "1975-05-15",
+    "address": "456 Oak St",
+    "gender": "F",
+    "profile_picture": "/images/doctor.jpg",
+    "user_type": "HP"
+  },
+  "clinic_affiliation": "City Hospital",
   "specialization": "Cardiology",
-  "license_id_information": "12345"
+  "license_id": "12345"
 }
 ```
 
-**Response (Failure):**
+- `user` (object): Healthcare provider's user details.
+- `clinic_affiliation` (string): Affiliated clinic of the healthcare provider.
+- `specialization` (string): Specialization of the healthcare provider.
+- `license_id` (string): License ID of the healthcare provider.
 
-```json
-{
-  "detail": "Authentication credentials were not provided."
-}
-```
+---
 
-#### Healthcare Provider Patients List
+## Healthcare Provider Patients
 
-- **Endpoint:** `/api/healthcare_provider/patients/`
-- **Method:** `GET`
-- **Authentication:** Token-based (Include the obtained token in the request headers)
-- **Description:** Retrieve a list of patients under the authenticated healthcare provider.
+### `GET /healthcare-provider/patients/`
 
-**Response (Success):**
+Retrieve a list of patients associated with the logged-in healthcare provider.
+
+#### Response
 
 ```json
 [
   {
-    "id": 2,
-    "name": "Jane Doe",
-    "email": "jane@example.com",
-    "user_type": "PT",
-  },
-  // Other patients...
+    "user": {
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "phone_number": "+1234567890",
+      "date_of_birth": "1990-01-01",
+      "address": "123 Main St",
+      "gender": "M",
+      "profile_picture": "/images/profile.jpg",
+      "user_type": "PT"
+    },
+    "healthcare_provider": {
+      "user": {
+        "name": "Dr. Smith",
+        "email": "dr.smith@example.com",
+        "phone_number": "+9876543210",
+        "date_of_birth": "1975-05-15",
+        "address": "456 Oak St",
+        "gender": "F",
+        "profile_picture": "/images/doctor.jpg",
+        "user_type": "HP"
+      },
+      "clinic_affiliation": "City Hospital",
+      "specialization": "Cardiology",
+      "license_id": "12345"
+    },
+    "allergies": "Peanuts"
+  }
+  // Additional patient objects
 ]
 ```
 
-**Response (Failure):**
+- List of patient objects, each containing user details, associated healthcare provider details, and patient's allergies.
+
+---
+
+## Update
+
+Patient Details
+
+### `PUT /patient/`
+
+Update details of the logged-in patient.
+
+#### Request
 
 ```json
 {
-  "detail": "Authentication credentials were not provided."
+  "user": {
+    "phone_number": "+1234567890",
+    "address": "456 Oak St",
+    "profile_picture": "/images/new_profile.jpg"
+  },
+  "healthcare_provider": {
+    "clinic_affiliation": "City Hospital",
+    "specialization": "Cardiology",
+    "license_id": "54321"
+  },
+  "allergies": "Tree nuts"
 }
 ```
 
-### Frontend Integration
+- Updated patient details.
 
-- After obtaining the authentication token, store it securely in the frontend e.g., in a secure HTTP-only cookie.
-- Use the stored token to authenticate API requests by including it in the `Authorization` header.
-- Based on the returned user type during authentication, dynamically decide whether to call patient or healthcare provider endpoints.
+#### Response
 
-If you have specific questions about the frontend implementation or need further clarification, feel free to ask!
+```json
+{
+  "user": {
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone_number": "+1234567890",
+    "date_of_birth": "1990-01-01",
+    "address": "456 Oak St",
+    "gender": "M",
+    "profile_picture": "/images/new_profile.jpg",
+    "user_type": "PT"
+  },
+  "healthcare_provider": {
+    "user": {
+      "name": "Dr. Smith",
+      "email": "dr.smith@example.com",
+      "phone_number": "+9876543210",
+      "date_of_birth": "1975-05-15",
+      "address": "456 Oak St",
+      "gender": "F",
+      "profile_picture": "/images/doctor.jpg",
+      "user_type": "HP"
+    },
+    "clinic_affiliation": "City Hospital",
+    "specialization": "Cardiology",
+    "license_id": "54321"
+  },
+  "allergies": "Tree nuts"
+}
+```
+
+- Updated patient details.
+
+---
+
+## Update Healthcare Provider Details
+
+### `PUT /healthcare-provider/`
+
+Update details of the logged-in healthcare provider.
+
+#### Request
+
+```json
+{
+  "user": {
+    "phone_number": "+9876543210",
+    "address": "789 Elm St",
+    "profile_picture": "/images/new_doctor.jpg"
+  },
+  "clinic_affiliation": "County Hospital",
+  "specialization": "Orthopedics",
+  "license_id": "ABCDE"
+}
+```
+
+- Updated healthcare provider details.
+
+#### Response
+
+```json
+{
+  "user": {
+    "name": "Dr. Smith",
+    "email": "dr.smith@example.com",
+    "phone_number": "+9876543210",
+    "date_of_birth": "1975-05-15",
+    "address": "789 Elm St",
+    "gender": "F",
+    "profile_picture": "/images/new_doctor.jpg",
+    "user_type": "HP"
+  },
+  "clinic_affiliation": "County Hospital",
+  "specialization": "Orthopedics",
+  "license_id": "ABCDE"
+}
+```
+
+- Updated healthcare provider details.
+
+---
+
+## List Healthcare Providers
+
+### `GET /healthcare-providers/`
+
+List healthcare providers associated with the logged-in patient.
+
+#### Response
+
+```json
+[
+  {
+    "user": {
+      "name": "Dr. Smith",
+      "email": "dr.smith@example.com",
+      "phone_number": "+9876543210",
+      "date_of_birth": "1975-05-15",
+      "address": "789 Elm St",
+      "gender": "F",
+      "profile_picture": "/images/new_doctor.jpg",
+      "user_type": "HP"
+    },
+    "clinic_affiliation": "County Hospital",
+    "specialization": "Orthopedics",
+    "license_id": "ABCDE"
+  }
+  // Additional healthcare provider objects
+]
+```
+
+- List of healthcare provider objects, each containing user details, clinic affiliation, specialization, and license ID.
+
+---
+
+## Important Notes
+
+- All requests to protected endpoints must include a valid JWT token in the Authorization header.
+- Tokens can be obtained by calling the `/token/obtain` endpoint with valid credentials.
+- Tokens have a limited lifespan and can be refreshed using the `/token/refresh` endpoint.
+
+---
