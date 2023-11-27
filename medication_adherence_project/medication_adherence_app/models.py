@@ -45,7 +45,9 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=25, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     address = models.CharField(max_length=50, blank=True, null=True)
-    gender = models.CharField(max_length=1, choices=gender_choices, blank=True)
+    gender = models.CharField(
+        max_length=1, choices=gender_choices, blank=True, default="O"
+    )
     profile_picture = models.ImageField(upload_to="images", blank=True, null=True)
     user_type = models.CharField(max_length=2, choices=USER_TYPES)
     USERNAME_FIELD = "email"
