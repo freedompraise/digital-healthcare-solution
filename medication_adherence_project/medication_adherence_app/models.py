@@ -1,6 +1,11 @@
 # medication_adherence_app/models.py
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from .utils import (
+    administration_route_choices,
+    administration_frequency_choices,
+    dosage_form_choices,
+)
 
 
 class CustomUserManager(BaseUserManager):
@@ -39,6 +44,7 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=25, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     address = models.CharField(max_length=50, blank=True, null=True)
+    gender = models.CharField(max_length=1, blank=True, null=True)
     profile_picture = models.ImageField(upload_to="images", blank=True)
     user_type = models.CharField(max_length=2, choices=USER_TYPES)
     USERNAME_FIELD = "email"
@@ -55,7 +61,7 @@ class HealthcareProvider(models.Model):
     )
     clinic_affiliation = models.CharField(max_length=255, blank=True)
     specialization = models.CharField(max_length=50, blank=True)
-    license_id_information = models.CharField(max_length=50, blank=True)
+    license_id = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
         return str(self.user)
@@ -68,6 +74,7 @@ class Patient(models.Model):
     healthcare_provider = models.ForeignKey(
         HealthcareProvider, on_delete=models.CASCADE, blank=True, null=True
     )
+    allergies = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return str(self.user)
@@ -75,25 +82,37 @@ class Patient(models.Model):
 
 class Medication(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    dosage = models.CharField(max_length=50)
-    frequency = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
     start_date = models.DateField()
     end_date = models.DateField()
-    # TO DO: Add other fields as needed for medications
+    prescribed_by = models.CharField(max_length=50, blank=True)
+    prescribed_in = models.CharField(max_length=100, blank=True)
+    dosage_strength = models.CharField(max_length=15)
+    dosage_form = models.CharField(
+        max_length=3, choices=dosage_form_choices, default="TAB"
+    )
+    administration_route = models.CharField(
+        max_length=3, choices=administration_route_choices, default="PO"
+    )
+    administration_frequency = models.CharField(
+        max_length=50, choices=administration_frequency_choices, default="QD"
+    )
+
+    def __str__(self):
+        return self.name
 
 
-class AdherenceReport(models.Model):
+class PatientHealthcareProvider(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     healthcare_provider = models.ForeignKey(
         HealthcareProvider, on_delete=models.CASCADE
     )
-    # TO DO: Add other fields as needed for adherence reports
+    invited = models.BooleanField(default=False)
+    accepted = models.BooleanField(default=False)
+    invitation_token = models.CharField(max_length=255, null=True, blank=True)
+    # Add other fields as needed
 
-
-class CommunicationLog(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    healthcare_provider = models.ForeignKey(
-        HealthcareProvider, on_delete=models.CASCADE
-    )
-    # TO DO: Add other fields as needed for communication logs
+    def generate_invitation_token(self):
+        # Implement logic to generate a unique token (e.g., using secrets module)
+        # Set the generated token to self.invitation_token
+        pass
