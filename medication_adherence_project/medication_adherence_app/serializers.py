@@ -9,6 +9,7 @@ from .models import (
     Patient,
     HealthcareProvider,
     CustomUser,
+    Medication,
 )
 
 
@@ -49,12 +50,19 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return user
 
 
+class MedicationSerialier(serializers.ModelSerializer):
+    class Meta:
+        model = Medication
+        fields = "__all__"
+
+
 class PatientSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer()
+    medication = MedicationSerialier()
 
     class Meta:
         model = Patient
-        fields = ["user", "healthcare_provider"]
+        fields = ["user", "healthcare_provider", "medication"]
         depth = 1
 
     def update(self, instance, validated_data):
