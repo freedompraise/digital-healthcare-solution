@@ -3,6 +3,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
 from .models import CustomUser, HealthcareProvider, Patient
 from .serializers import (
     PatientSerializer,
@@ -13,6 +14,10 @@ from .serializers import (
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
 )
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate, login
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 
 class RegisterUserView(generics.CreateAPIView):
@@ -51,16 +56,31 @@ class RegisterUserView(generics.CreateAPIView):
         return Response({"message": message}, status=status.HTTP_201_CREATED)
 
 
-class EmailTokenObtainPairView(TokenObtainPairView):
-    serializer_class = TokenObtainPairSerializer
+@method_decorator(csrf_exempt, name="dispatch")
+class LoginView(APIView):
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        if response.status_code == status.HTTP_200_OK:
-            # Extract user_type from the validated data
-            user_type = response.data.get("user_type")
-            response.data["user_type"] = user_type
-        return response
+        email = request.data.get("email")
+        password = request.data.get("password")
+
+        user = authenticate(request, email=email, password=password)
+        print(user)
+        if user:
+            login(request, user)
+            user_type = user.user_type
+            refresh = RefreshToken.for_user(user)
+            return Response(
+                {
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token),
+                    "user_type": user_type,
+                }
+            )
+        else:
+            return Response(
+                {"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
+            )
 
 
 class PatientDetailView(generics.RetrieveUpdateAPIView):

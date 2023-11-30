@@ -2,7 +2,7 @@
 from django.urls import path
 from .views import (
     RegisterUserView,
-    EmailTokenObtainPairView,
+    LoginView,
     PatientDetailView,
     HealthcareProviderDetailView,
     HealthcareProviderPatientsView,
@@ -14,8 +14,7 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path("register/", RegisterUserView.as_view(), name="register-user"),
-    path("token/obtain", EmailTokenObtainPairView.as_view(), name="token-create"),
-    path("token/refresh", TokenRefreshView.as_view(), name="token-refresh"),
+    path("login/", LoginView.as_view(), name="login"),
     path("patient/", PatientDetailView.as_view(), name="patient-detail"),
     path(
         "healthcare-provider/",
