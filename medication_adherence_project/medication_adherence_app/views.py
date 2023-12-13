@@ -14,6 +14,7 @@ from .serializers import (
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
 )
+import json
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
@@ -61,11 +62,18 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        email = request.data.get("email")
-        password = request.data.get("password")
+        # Get the JSON string from the request.data
+        content = request.data.get("_content")
 
-        user = authenticate(request, email=email, password=password)
-        print(user)
+        # Parse the JSON string into a Python dictionary
+        data = json.loads(content)
+
+        # Get the email and password from the data dictionary
+        email = data.get("email")
+        password = data.get("password")
+        print(request.data)
+
+        user = authenticate(email=email, password=password)
         if user:
             login(request, user)
             user_type = user.user_type
