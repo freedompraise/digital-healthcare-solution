@@ -2,26 +2,15 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
-from django.contrib.auth import get_user_model
 
 
 class UrlsTestCase(TestCase):
     def setUp(self):
-        # Create a patient user
-        self.patient_user = get_user_model().objects.create_user(
-            email="patient@example.com",
-            password="password",
-            name="Patient User",
-            user_type="PT",
-        )
+        self.client = APIClient()
 
-        # Create a healthcare provider user
-        self.provider_user = get_user_model().objects.create_user(
-            email="provider@example.com",
-            password="password",
-            name="Provider User",
-            user_type="HP",
-        )
+        self.patient_user, self.patient = create_patient_user()
+
+        self.provider_user, self.provider = create_provider_user()
 
     def test_register_user_url(self):
         url = reverse("register-user")
