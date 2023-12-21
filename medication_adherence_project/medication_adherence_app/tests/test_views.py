@@ -1,28 +1,13 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
-from django.contrib.auth import get_user_model
-from .models import HealthcareProvider, Patient
+from .utils import create_patient_user, create_provider_user
 
 
 class ViewsTestCase(APITestCase):
     def setUp(self):
-        # Create a patient user
-        self.patient_user = get_user_model().objects.create_user(
-            email="patient@example.com",
-            password="password",
-            name="Patient User",
-            user_type="PT",
-        )
-        self.patient = Patient.objects.create(user=self.patient_user)
+        self.patient_user, self.patient = create_patient_user()
 
-        # Create a healthcare provider user
-        self.provider_user = get_user_model().objects.create_user(
-            email="provider@example.com",
-            password="password",
-            name="Provider User",
-            user_type="HP",
-        )
-        self.provider = HealthcareProvider.objects.create(user=self.provider_user)
+        self.provider_user, self.provider = create_provider_user()
 
     def test_register_patient(self):
         url = "/api/register/"
