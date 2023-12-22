@@ -1,0 +1,54 @@
+name: Python Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: "medication_adherence_project.settings"
+      DJANGO_SECRET_KEY: "thisisnotasecret"
+      USE_SQLITE: True
+      CLOUDINARY_API_KEY: secrets.CLOUDINARY_API_KEY
+      CLOUDINARY_CLOUD_NAME: secrets.CLOUDINARY_CLOUD_NAME
+      CLOUDINARY_API_SECRET: secrets.CLOUDINARY_API_SECRET
+
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.8]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: update-system-dependencies
+        run: |
+          sudo apt-get update -y
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.10.8
+          cache: "pip"
+
+      - name: Change working directory
+        run: cd medication_adherence_project
+
+      - name: Set up virtual environment
+        run: python -m venv venv
+
+      - name: Activate virtual environment
+        run: source venv/bin/activate
+
+      - name: Install dependencies
+        run: pip install wheel && pip install -r requirements.txt
+
+      - name: Run migrations
+        run: python manage.py migrate --noinput
+
+      - name: Run tests
+        run: python manage.py test
