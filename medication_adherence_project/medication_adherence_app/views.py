@@ -7,12 +7,8 @@ from rest_framework.views import APIView
 from .models import CustomUser, HealthcareProvider, Patient
 from .serializers import (
     PatientSerializer,
-    TokenObtainPairSerializer,
     CustomUserSerializer,
     HealthcareProviderSerializer,
-)
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
 )
 import json
 from rest_framework_simplejwt.tokens import RefreshToken

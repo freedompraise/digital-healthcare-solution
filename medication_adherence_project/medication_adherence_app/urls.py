@@ -8,9 +8,6 @@ from .views import (
     HealthcareProviderPatientsView,
     HealthcareProviderPatientsView,
 )
-from rest_framework_simplejwt.views import (
-    TokenRefreshView,
-)
 
 urlpatterns = [
     path("register/", RegisterUserView.as_view(), name="register-user"),
