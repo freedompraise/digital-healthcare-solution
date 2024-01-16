@@ -2,7 +2,7 @@
 from django.urls import path
 from .views import (
     RegisterUserView,
-    LoginView,
+    EmailTokenObtainPairView,
     PatientDetailView,
     HealthcareProviderDetailView,
     HealthcareProviderPatientsView,
@@ -11,7 +11,8 @@ from .views import (
 
 urlpatterns = [
     path("register/", RegisterUserView.as_view(), name="register-user"),
-    path("login/", LoginView.as_view(), name="login"),
+    path("token/obtain", EmailTokenObtainPairView.as_view(), name="token-create"),
+    path("token/refresh", TokenRefreshView.as_view(), name="token-refresh"),
     path("patient/", PatientDetailView.as_view(), name="patient-detail"),
     path(
         "healthcare-provider/",
