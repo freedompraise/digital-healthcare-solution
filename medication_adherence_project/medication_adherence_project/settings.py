@@ -47,8 +47,7 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-        # "rest_framework.authentication.TokenAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
@@ -64,11 +63,7 @@ SIMPLE_JWT = {
 
 ROOT_URLCONF = "medication_adherence_project.urls"
 
-AUTHENTICATION_BACKENDS = [
-    # "medication_adherence_app.auth_backends.EmailBackend",
-    "django.contrib.auth.backends.ModelBackend",
-]
-
+AUTHENTICATION_BACKENDS = ["medication_adherence_app.auth_backends.EmailBackend"]
 
 TEMPLATES = [
     {
@@ -87,7 +82,7 @@ TEMPLATES = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
+
 ACCESS_CONTROL_ALLOW_ORIGIN = "*"
 
 WSGI_APPLICATION = "medication_adherence_project.wsgi.application"
@@ -125,10 +120,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = "medication_adherence_app.CustomUser"
-
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
-LOGIN_URL = "/login/"
 
 
 LANGUAGE_CODE = "en-us"
