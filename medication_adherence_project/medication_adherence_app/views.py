@@ -8,10 +8,9 @@ from .serializers import (
     PatientSerializer,
     CustomUserSerializer,
     HealthcareProviderSerializer,
+    TokenObtainPairSerializer,
 )
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-)
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 class RegisterUserView(generics.CreateAPIView):
