@@ -58,13 +58,9 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        # Get the JSON string from the request.data
         content = request.data.get("_content")
-
-        # Parse the JSON string into a Python dictionary
         data = json.loads(content)
 
-        # Get the email and password from the data dictionary
         email = data.get("email")
         password = data.get("password")
         print(request.data)
