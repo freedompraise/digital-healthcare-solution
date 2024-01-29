@@ -5,8 +5,6 @@ from .views import (
     EmailTokenObtainPairView,
     PatientDetailView,
     HealthcareProviderDetailView,
-    HealthcareProviderPatientsView,
-    HealthcareProviderPatientsView,
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -19,15 +17,5 @@ urlpatterns = [
         "healthcare-provider/",
         HealthcareProviderDetailView.as_view(),
         name="healthcare-provider-detail",
-    ),
-    path(
-        "healthcare-provider/patients/",
-        HealthcareProviderPatientsView.as_view(),
-        name="healthcare-provider-patients",
-    ),
-    path(
-        "healthcare-providers/",
-        HealthcareProviderPatientsView.as_view(),
-        name="healthcare-provider-patient-detail",
     ),
 ]

@@ -111,12 +111,3 @@ class HealthcareProviderPatientsView(generics.ListAPIView):
     def get_queryset(self):
         healthcare_provider = self.request.user.healthcareprovider
         return Patient.objects.filter(healthcare_provider=healthcare_provider)
-
-
-class HealthcareProvidersList(generics.ListAPIView):
-    serializer_class = HealthcareProviderSerializer
-    permission_classes = [AllowAny]
-
-    def get_queryset(self):
-        patient = self.request.user.patient
-        return HealthcareProvider.objects.filter(patient=patient)
