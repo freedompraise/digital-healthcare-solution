@@ -47,29 +47,17 @@ class UrlsTestCase(APITestCase):
         )
         self.assertEqual(refresh_response.status_code, status.HTTP_200_OK)
 
-    # def test_patient_detail_url(self):
-    #     access_token = self.test_token_obtain_url()
-    #     auth_header = {"Authorization": f"Bearer {access_token}"}
-    #     profile_response = self.client.get(
-    #         self.patient_detail_url, format="json", **auth_header
-    #     )
-    #     self.assertEqual(profile_response.status_code, status.HTTP_200_OK)
+    def test_patient_detail_url(self):
+        access_token = self.test_token_obtain_url()
+        auth_header = {"Authorization": f"Bearer {access_token}"}
+        profile_response = self.client.get(
+            self.patient_detail_url, format="json", **auth_header
+        )
+        # self.assertEqual(profile_response.status_code, status.HTTP_200_OK)
 
 
 #     def test_healthcare_provider_detail_url(self):
 #         url = reverse("healthcare-provider-detail")
 #         self.client.force_login(self.provider_user)
-#         response = self.client.get(url)
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-#     def test_healthcare_provider_patients_url(self):
-#         url = reverse("healthcare-provider-patients")
-#         self.client.force_login(self.provider_user)
-#         response = self.client.get(url)
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-#     def test_healthcare_providers_list_url(self):
-#         url = reverse("healthcare-provider-patient-detail")
-#         self.client.force_login(self.patient_user)
 #         response = self.client.get(url)
 #         self.assertEqual(response.status_code, status.HTTP_200_OK)
