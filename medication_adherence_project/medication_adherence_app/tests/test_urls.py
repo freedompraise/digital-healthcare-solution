@@ -11,6 +11,7 @@ class UrlsTestCase(APITestCase):
         self.login_url = reverse("token-create")
         self.refresh_url = reverse("token-refresh")
         self.patient_detail_url = reverse("patient-detail")
+        self.provider_detail_url = reverse("healthcare-provider-detail")
 
     def test_register_user_url(self):
         url = reverse("register-user")
@@ -24,10 +25,11 @@ class UrlsTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue("New User" in response.data.get("name"))
 
-    def test_token_obtain_url(self):
+    def test_token_obtain_url(self, user_type=None):
+        email = self.patient_user.email if not user_type else self.provider_user.email
         url = reverse("token-create")
         data = {
-            "email": self.patient_user.email,
+            "email": email,
             "password": "password",
         }
         response = self.client.post(url, data, format="json")
@@ -56,9 +58,9 @@ class UrlsTestCase(APITestCase):
         response = client.get(self.patient_detail_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-
-#     def test_healthcare_provider_detail_url(self):
-#         url = reverse("healthcare-provider-detail")
-#         self.client.force_login(self.provider_user)
-#         response = self.client.get(url)
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_healthcare_provider_detail_url(self):
+        access_token = self.test_token_obtain_url(user_type="HP")
+        client = APIClient(HTTP_AUTHORIZATION="Bearer " + access_token)
+        client.force_authenticate(user=self.provider_user)
+        response = client.get(self.provider_detail_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
