@@ -1,5 +1,5 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from .utils import create_patient_user, create_provider_user
 
@@ -50,12 +50,11 @@ class UrlsTestCase(APITestCase):
         self.assertTrue("access" in refresh_response.data)
 
     def test_patient_detail_url(self):
-        access_token = "cust"
-        auth_header = {"Authorization": f"Bearer {access_token}"}
-        profile_response = self.client.get(
-            self.patient_detail_url, format="json", **auth_header
-        )
-        # self.assertEqual(profile_response.status_code, status.HTTP_200_OK)
+        access_token = self.test_token_obtain_url()
+        client = APIClient(HTTP_AUTHORIZATION="Bearer " + access_token)
+        client.force_authenticate(user=self.patient_user)
+        response = client.get(self.patient_detail_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 #     def test_healthcare_provider_detail_url(self):
