@@ -22,6 +22,7 @@ class UrlsTestCase(APITestCase):
         }
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue("New User" in response.data.get("name"))
 
     def test_token_obtain_url(self):
         url = reverse("token-create")
@@ -46,9 +47,10 @@ class UrlsTestCase(APITestCase):
             self.refresh_url, refresh_data, format="json"
         )
         self.assertEqual(refresh_response.status_code, status.HTTP_200_OK)
+        self.assertTrue("access" in refresh_response.data)
 
     def test_patient_detail_url(self):
-        access_token = self.test_token_obtain_url()
+        access_token = "cust"
         auth_header = {"Authorization": f"Bearer {access_token}"}
         profile_response = self.client.get(
             self.patient_detail_url, format="json", **auth_header
